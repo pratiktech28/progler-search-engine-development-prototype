@@ -3,9 +3,30 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Progler — Search that understands',
+  metadataBase: new URL('https://progler.vercel.app'),
+  title: {
+    default: 'Progler — Search that understands',
+    template: '%s | Progler',
+  },
   description: 'Progler is a fast, thoughtful search engine for the modern web.',
+  keywords: ['Progler', 'search engine', 'web search', 'AI search'],
+  applicationName: 'Progler',
   generator: 'v0.app',
+  openGraph: {
+    title: 'Progler — Search that understands',
+    description: 'A fast, thoughtful search engine for the modern web.',
+    type: 'website',
+    siteName: 'Progler',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Progler — Search that understands',
+    description: 'A fast, thoughtful search engine for the modern web.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       {

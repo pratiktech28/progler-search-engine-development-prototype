@@ -3,13 +3,11 @@
 import { FormEvent, useState } from 'react'
 import { Camera, Grid3X3, Mic, Moon, Search, Sun, X } from 'lucide-react'
 
-const shortcuts = ['GitHub', 'YouTube', 'Figma', 'NotebookLM', 'ChatGPT', 'LeetCode']
-
 function normalizeQuery(value: string) {
   return value.trim().replace(/\s+/g, ' ')
 }
 
-export function ProglerSearch() {
+export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   const [query, setQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [dark, setDark] = useState(true)
