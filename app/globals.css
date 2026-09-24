@@ -223,7 +223,14 @@
 .feature-card strong, .feature-card small { display: block; font-weight: 400; }
 .feature-card strong { font-size: 14px; }
 .feature-card small { margin-top: 4px; color: #aebdbc; font-size: 12px; }
-.shortcut-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 23px; margin-top: 68px; }
+.shortcut-section { width: min(100%, 600px); margin-top: 28px; }
+.shortcut-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
+.add-shortcut { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 18px; background: transparent; color: var(--muted); cursor: pointer; padding: 7px 10px; font: inherit; }
+.add-shortcut:hover { background: #ffffff12; color: var(--ink); }
+.shortcut-form { display: flex; gap: 8px; margin-bottom: 16px; }
+.shortcut-form input { min-width: 0; flex: 1; border: 1px solid #ffffff22; border-radius: 8px; background: #ffffff0d; color: var(--ink); outline: 0; padding: 9px 11px; font: inherit; }
+.shortcut-form button { border: 0; border-radius: 8px; background: #d9eeee; color: #172125; cursor: pointer; padding: 0 15px; font-size: 12px; }
+.shortcut-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 23px; }
 .shortcut { display: flex; width: 75px; flex-direction: column; align-items: center; gap: 10px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; }
 .shortcut-icon { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50%; background: #12272e; color: #b6c2c2; font-size: 23px; font-weight: 600; }
 .shortcut:hover .shortcut-icon { background: #1b3b43; transform: translateY(-2px); }
@@ -232,7 +239,7 @@
 .progler-footer button { display: grid; place-items: center; }
 @media (max-width: 900px) {
   .progler-center { width: min(100%, 680px); padding-top: clamp(72px, 13vh, 132px); }
-  .shortcut-grid { margin-top: 54px; }
+  .shortcut-grid { margin-top: 0; }
 }
 
 @media (max-width: 640px) {
@@ -247,7 +254,7 @@
   .search-buttons { margin-top: 22px; }
   .search-buttons button { padding: 9px 13px; font-size: 13px; }
   .language-line { margin-top: 22px; }
-  .shortcut-grid { width: min(100%, 360px); gap: 20px 6px; margin-top: 42px; }
+  .shortcut-grid { width: min(100%, 360px); gap: 20px 6px; margin-top: 0; }
   .shortcut { width: 74px; gap: 8px; font-size: 11px; }
   .shortcut-icon { width: 50px; height: 50px; }
   .progler-footer { align-items: flex-start; flex-direction: column; gap: 12px; padding: 13px 16px; }

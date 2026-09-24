@@ -1,7 +1,7 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
-import { Camera, Grid3X3, Mic, Moon, Search, Sun, X } from 'lucide-react'
+import { Camera, Grid3X3, Mic, Moon, Plus, Search, Sun, X } from 'lucide-react'
 
 function normalizeQuery(value: string) {
   return value.trim().replace(/\s+/g, ' ')
@@ -12,6 +12,9 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [dark, setDark] = useState(true)
   const [notice, setNotice] = useState('')
+  const [showShortcutForm, setShowShortcutForm] = useState(false)
+  const [shortcutName, setShortcutName] = useState('')
+  const [customShortcuts, setCustomShortcuts] = useState<string[]>([])
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -22,6 +25,15 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
     }
     setSubmittedQuery(cleanQuery)
     setNotice('')
+  }
+
+  function addShortcut(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const cleanName = normalizeQuery(shortcutName)
+    if (!cleanName) return
+    setCustomShortcuts((current) => current.includes(cleanName) ? current : [...current, cleanName])
+    setShortcutName('')
+    setShowShortcutForm(false)
   }
 
   function chooseAction(action: 'search' | 'ai') {
@@ -66,15 +78,30 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
           <button type="button" className="search-action" aria-label="Voice search" onClick={() => setNotice('Voice search is ready for a future connection.')}><Mic size={21} /></button>
           <button type="button" className="search-action" aria-label="Search by image" onClick={() => setNotice('Image search is ready for a future connection.')}><Camera size={21} /></button>
         </form>
+        <div className="shortcut-section">
+          <div className="shortcut-heading">
+            <span>Shortcuts</span>
+            <button className="add-shortcut" type="button" onClick={() => setShowShortcutForm((current) => !current)} aria-expanded={showShortcutForm}>
+              <Plus size={16} aria-hidden="true" />
+              <span>Add shortcut</span>
+            </button>
+          </div>
+          {showShortcutForm && (
+            <form className="shortcut-form" onSubmit={addShortcut}>
+              <input aria-label="Shortcut name" value={shortcutName} onChange={(event) => setShortcutName(event.target.value)} placeholder="Shortcut name" autoFocus />
+              <button type="submit">Add</button>
+            </form>
+          )}
+          <div className="shortcut-grid" aria-label="Popular shortcuts">
+            {[...shortcuts, ...customShortcuts].map((shortcut) => <button className="shortcut" type="button" key={shortcut} onClick={() => setQuery(shortcut)}><span className="shortcut-icon">{shortcut[0]}</span><span>{shortcut}</span></button>)}
+          </div>
+        </div>
         <div className="search-buttons">
           <button type="button" onClick={() => chooseAction('search')}>Progler Search</button>
           <button type="button" onClick={() => chooseAction('ai')}>Explore AI</button>
         </div>
         <p className="language-line">Progler offered in <a href="#hindi">हिन्दी</a> <a href="#english">English</a></p>
         {(notice || submittedQuery) && <p className="search-feedback" role="status">{notice || `Searching Progler for “${submittedQuery}”`}</p>}
-        <div className="shortcut-grid" aria-label="Popular shortcuts">
-          {shortcuts.map((shortcut) => <button className="shortcut" type="button" key={shortcut} onClick={() => setQuery(shortcut)}><span className="shortcut-icon">{shortcut[0]}</span><span>{shortcut}</span></button>)}
-        </div>
       </section>
 
       <footer className="progler-footer">
