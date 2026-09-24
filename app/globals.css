@@ -189,7 +189,7 @@
   mix-blend-mode: screen;
 }
 
-.progler-light { --page: #eef2f1; --ink: #1f292d; --muted: #546064; --input: #fff; --input-ink: #263034; background: linear-gradient(135deg, #dfe9e8, #f6f7f6 65%); }
+.progler-light { --page: #ffffff; --ink: #202124; --muted: #5f6368; --input: #ffffff; --input-ink: #202124; background: #ffffff; }
 .progler-header, .progler-center, .progler-footer { position: relative; z-index: 1; }
 .progler-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; font-size: 14px; }
 .progler-nav-links, .progler-nav-actions, .footer-right { display: flex; align-items: center; gap: 22px; }
