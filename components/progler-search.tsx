@@ -21,13 +21,35 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   const [shortcutName, setShortcutName] = useState('')
   const [shortcutUrl, setShortcutUrl] = useState('')
   const [customShortcuts, setCustomShortcuts] = useState<string[]>([])
+  const [results, setResults] = useState<Array<{ title: string; link: string; snippet: string; source: string; date?: string }>>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  async function runSearch(cleanQuery: string) {
+    setIsLoading(true)
+    setResults([])
+    try {
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: cleanQuery, type: mode === 'News' ? 'news' : 'search' }),
+      })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.error)
+      setResults(payload.results ?? [])
+      setNotice(`Showing fresh results for “${cleanQuery}”`)
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Search is temporarily unavailable.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const cleanQuery = normalizeQuery(query)
     if (!cleanQuery) { setNotice('Type something to search Progler.'); return }
     setSubmittedQuery(cleanQuery)
-    setNotice(mode === 'AI' ? `Exploring AI for “${cleanQuery}”` : `Searching Progler for “${cleanQuery}”`)
+    void runSearch(cleanQuery)
   }
 
   function addShortcut(event: FormEvent<HTMLFormElement>) {
@@ -45,7 +67,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
     const cleanQuery = normalizeQuery(query)
     if (!cleanQuery) { setNotice(action === 'ai' ? 'Ask Progler AI anything.' : 'Type something to search Progler.'); return }
     setSubmittedQuery(cleanQuery)
-    setNotice(action === 'ai' ? `Exploring AI for “${cleanQuery}”` : `Searching Progler for “${cleanQuery}”`)
+    void runSearch(cleanQuery)
   }
 
   return (
@@ -88,7 +110,15 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
         <section className="trending" aria-labelledby="trending-title"><span id="trending-title">Trending searches</span><div>{trending.map((item) => <button key={item} type="button" onClick={() => setQuery(item)}>{item}</button>)}</div></section>
         <div className="system-row"><span><i /> Demo environment</span><span>~80 ms response</span></div>
         <p className="language-line">Progler offered in <a href="#hindi">हिन्दी</a><a href="#english">English</a></p>
-        {(notice || submittedQuery) && <p className="search-feedback" role="status">{notice}</p>}
+        {isLoading && <p className="search-feedback" role="status">Finding fresh results…</p>}
+        {(notice || submittedQuery) && !isLoading && <p className="search-feedback" role="status">{notice}</p>}
+        {results.length > 0 && <section className="results-panel" aria-label="Search results">
+          {results.map((result) => <article className="result-card" key={`${result.link}-${result.title}`}>
+            <a className="result-title" href={result.link} target="_blank" rel="noreferrer">{result.title}</a>
+            <p className="result-source">{result.source}{result.date ? ` · ${result.date}` : ''}</p>
+            <p className="result-snippet">{result.snippet}</p>
+          </article>)}
+        </section>}
       </section>
 
       <footer className="progler-footer"><span>India</span><div className="footer-right"><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="#settings">Settings</a><button onClick={() => setDark(!dark)} aria-label={dark ? 'Use light theme' : 'Use dark theme'} type="button">{dark ? <Sun size={15} /> : <Moon size={15} />}</button></div></footer>
