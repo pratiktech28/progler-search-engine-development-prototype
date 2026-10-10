@@ -14,6 +14,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   const [query, setQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [dark, setDark] = useState(true)
+  const [theme, setTheme] = useState<'lagoon' | 'ember' | 'mono'>('lagoon')
   const [notice, setNotice] = useState('')
   const [mode, setMode] = useState('Web')
   const [showShortcutForm, setShowShortcutForm] = useState(false)
@@ -22,6 +23,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   const [shortcutUrl, setShortcutUrl] = useState('')
   const [customShortcuts, setCustomShortcuts] = useState<string[]>([])
   const [results, setResults] = useState<Array<{ title: string; link: string; snippet: string; source: string; date?: string }>>([])
+  const [overview, setOverview] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   async function runSearch(cleanQuery: string) {
@@ -36,6 +38,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
       const payload = await response.json()
       if (!response.ok) throw new Error(payload.error)
       setResults(payload.results ?? [])
+      setOverview(typeof payload.overview === 'string' ? payload.overview : '')
       setNotice(`Showing fresh results for “${cleanQuery}”`)
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'Search is temporarily unavailable.')
@@ -71,7 +74,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
   }
 
   return (
-    <main className={`progler-home ${dark ? 'progler-dark' : 'progler-light'}`}>
+    <main className={`progler-home theme-${theme} ${dark ? 'progler-dark' : 'progler-light'}`}>
       <header className="progler-header">
         <nav className="progler-nav" aria-label="Primary navigation">
           <div className="progler-nav-links"><a href="#about">About</a><a href="#store">Store</a></div>
@@ -112,6 +115,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
         <p className="language-line">Progler offered in <a href="#hindi">हिन्दी</a><a href="#english">English</a></p>
         {isLoading && <p className="search-feedback" role="status">Finding fresh results…</p>}
         {(notice || submittedQuery) && !isLoading && <p className="search-feedback" role="status">{notice}</p>}
+        {overview && <section className="ai-overview" aria-labelledby="ai-overview-title"><div className="ai-overview-label"><span className="ai-spark" aria-hidden="true">AI</span><span id="ai-overview-title">Progler AI overview</span><span className="ai-badge">Gemini</span></div><p>{overview}</p></section>}
         {results.length > 0 && <section className="results-panel" aria-label="Search results">
           {results.map((result) => <article className="result-card" key={`${result.link}-${result.title}`}>
             <a className="result-title" href={result.link} target="_blank" rel="noreferrer">{result.title}</a>
@@ -121,7 +125,7 @@ export function ProglerSearch({ shortcuts }: { shortcuts: string[] }) {
         </section>}
       </section>
 
-      <footer className="progler-footer"><span>India</span><div className="footer-right"><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="#settings">Settings</a><button onClick={() => setDark(!dark)} aria-label={dark ? 'Use light theme' : 'Use dark theme'} type="button">{dark ? <Sun size={15} /> : <Moon size={15} />}</button></div></footer>
+      <footer className="progler-footer"><span>India</span><div className="footer-right"><a href="#privacy">Privacy</a><a href="#terms">Terms</a><label className="theme-picker">Theme<select aria-label="Choose Progler theme" value={theme} onChange={(event) => setTheme(event.target.value as typeof theme)}><option value="lagoon">Lagoon</option><option value="ember">Ember</option><option value="mono">Mono</option></select></label><a href="#settings">Settings</a><button onClick={() => setDark(!dark)} aria-label={dark ? 'Use light theme' : 'Use dark theme'} type="button">{dark ? <Sun size={15} /> : <Moon size={15} />}</button></div></footer>
     </main>
   )
 }

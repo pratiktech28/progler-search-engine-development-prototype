@@ -1,3 +1,4 @@
+import { generateText } from 'ai'
 import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
@@ -40,7 +41,24 @@ export async function POST(request: Request) {
       date: typeof item.date === 'string' ? item.date : undefined,
     }))
 
-    return NextResponse.json({ query, results })
+    let overview = ''
+    try {
+      const response = await generateText({
+        model: 'google/gemini-3.5-flash',
+        system: 'You are Progler AI. Give a concise, neutral answer based only on the provided search results. Cite sources inline as [1], [2]. If evidence is limited, say so. Do not invent facts.',
+        prompt: `Question: ${query}\n\nSearch results:\n${results.slice(0, 8).map((result: { title: string; link: string; snippet: string }, index: number) => `[${index + 1}] ${result.title}\n${result.link}\n${result.snippet}`).join('\\n\\n')}`,
+        maxOutputTokens: 420,
+      })
+      overview = response.text.trim()
+    } catch {
+      overview = ''
+    }
+
+    if (!overview && results.length > 0) {
+      overview = `Progler found ${results.length} relevant sources for “${query}”. The strongest matches focus on ${results.slice(0, 2).map((result: { title: string }) => result.title).join(' and ')}. Review the linked sources for full context.`
+    }
+
+    return NextResponse.json({ query, results, overview })
   } catch {
     return NextResponse.json({ error: 'Unable to complete this search.' }, { status: 500 })
   }
